@@ -13,7 +13,7 @@ class EventPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -21,7 +21,7 @@ class EventPolicy
      */
     public function view(User $user, Event $event): bool
     {
-        return false;
+        return $event->user->is($user);
     }
 
     /**
@@ -47,7 +47,7 @@ class EventPolicy
      */
     public function delete(User $user, Event $event): bool
     {
-        return false;
+        return $user->id === $event->user_id && $user->role === 'admin';
     }
 
     /**

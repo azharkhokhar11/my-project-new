@@ -30,7 +30,7 @@ class UsersController extends Controller
             'last_name' => ['required','max:255'],
             'email' => ['required','email','unique:users'],
             'password' => ['required','confirmed',Password::min(6)],
-            'role' => ['required']
+            'role' => ['required','in:admin,user,guest'],
             
         ]);
         $user = new User;

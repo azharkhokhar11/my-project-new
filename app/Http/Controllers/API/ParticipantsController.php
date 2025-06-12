@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\EventCreated;
 use App\Models\Participant;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ParticipantResource;
+use App\Jobs\SendEventNotification;
+use App\Mail\EventAdded;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ParticipantsController extends Controller
 {
@@ -40,6 +45,16 @@ class ParticipantsController extends Controller
 
         $participant->events()->sync($participant_events);
 
+        EventCreated::dispatch($participant);
+
+        //email dispatch
+        // foreach($participant->events as $event)
+        // {            
+        // SendEventNotification::dispatch($event, $participant)->onQueue('mail');
+        // // Log::info("Dispatched email job for participant {$participant->id} and event {$event->id}");
+
+        // }
+
         return new ParticipantResource($participant);
     }
 
@@ -58,10 +73,10 @@ class ParticipantsController extends Controller
     public function update(Request $request, Participant $participant)
     {
         $validateddata = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:participants,email',
-            'phone_number' => 'required|string|max:20',
+            'first_name' => ['required'],
+            'last_name' => ['required'],
+            'email' => ['required','email','unique:participants,email'.$participant->id],
+            'phone_number' => ['required','string','max:20'],
         ]);
 
         $participant->update($validateddata);

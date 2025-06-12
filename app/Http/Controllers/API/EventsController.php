@@ -9,6 +9,7 @@ use App\Models\Event;
 use App\Models\Venue;
 use Psy\Readline\Hoa\EventSource;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class EventsController extends Controller
 {
@@ -17,6 +18,7 @@ class EventsController extends Controller
      */
     public function index()
     {
+        Gate::authorize('viewAny', Event::class);
         $events = Event::with('venue:id,name','participants')->get();
         return EventResource::collection($events);
     }
@@ -30,9 +32,9 @@ class EventsController extends Controller
         $request->validate([
             'name' => ['required','unique:events'],
             'description' => ['required'],
-            'date' => ['required'],
-            'venue_id' => ['required'],
-            'user_id' => ['required']
+            'date' => ['required','date',Rule::date()->format('y-m-d')],
+            'venue_id' => ['required','exists:venues,id'],
+            'user_id' => ['required','exists:users,id']
         ]); 
         $event = new Event;
         $event->name = $request->name;
@@ -49,6 +51,7 @@ class EventsController extends Controller
      */
     public function show(Event $event)
     {
+        Gate::authorize('view',$event);
         return new EventResource($event);
     }
 
@@ -63,7 +66,7 @@ class EventsController extends Controller
             $validateddata = $request->validate([
                 'name' => ['required','unique:events'],
                 'description' => ['required'],
-                'date' => ['required'],
+                'date' => ['required','date'],
                 'venue_id' => ['required'],
                 'user_id' => ['required']
             ]); 
@@ -71,7 +74,7 @@ class EventsController extends Controller
             $event->update($validateddata);
             return new EventResource($event);
         } else {
-            echo $response->message();
+            return $response->message();
         }
 
        
@@ -82,6 +85,7 @@ class EventsController extends Controller
      */
     public function destroy(Event $event)
     {
+        Gate::authorize('delete',$event);
         $event->delete();
         return new EventResource($event);
     }
