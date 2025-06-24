@@ -10,6 +10,7 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Actions\LoginUser;
 
 class LoginController extends Controller
 {
@@ -17,22 +18,23 @@ class LoginController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request, LoginUser $action)
     {
-        $request->validated($request->all());
+        return $action->handle($request);
 
-        if(! Auth::attempt($request->only('email','password')))
-        {
-            throw new AuthenticationException();
-        }
+        // $request->validated($request->all());
 
-        $request->session()->regenerate();
-        $user = User::firstWhere('email',$request->email);
-        $token = $user->createToken('access-token')->plainTextToken;
-        $resource = new UserResource($user);
-        $resource->token = $token;
+        // if(! Auth::attempt($request->only('email','password')))
+        // {
+        //     throw new AuthenticationException();
+        // }
 
-        return $resource;    
+        // $user = User::firstWhere('email',$request->email);
+        // $token = $user->createToken('access-token')->plainTextToken;
+        // $resource = new UserResource($user);
+        // $resource->token = $token;
+
+        // return $resource;    
     }
 
     /**

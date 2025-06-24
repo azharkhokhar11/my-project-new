@@ -51,8 +51,6 @@ class ParticipantsController extends Controller
         // foreach($participant->events as $event)
         // {            
         // SendEventNotification::dispatch($event, $participant)->onQueue('mail');
-        // // Log::info("Dispatched email job for participant {$participant->id} and event {$event->id}");
-
         // }
 
         return new ParticipantResource($participant);
