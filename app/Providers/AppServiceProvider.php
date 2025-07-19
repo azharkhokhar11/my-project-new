@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
-use App\Events\EventCreated;
-use App\Listeners\SendEventCreatedEmail;
 use App\Models\Participant;
-use App\Observers\ParticipantObserver;
-use Illuminate\Support\ServiceProvider;
+use App\Events\EventCreated;
 use Illuminate\Support\Facades\Event;
+use App\Observers\ParticipantObserver;
+use App\Repositories\SpeakerRepository;
+use Illuminate\Support\ServiceProvider;
+use App\Listeners\SendEventCreatedEmail;
+use App\Repositories\ParticipantRepository;
+use App\Repositories\SpeakerRepositoryInterface;
+use App\Repositories\ParticipantRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -17,7 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(ParticipantRepositoryInterface::class, ParticipantRepository::class);
+        $this->app->bind(SpeakerRepositoryInterface::class, SpeakerRepository::class);
+
     }
 
     /**

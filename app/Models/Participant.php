@@ -11,6 +11,9 @@ class Participant extends Model
     /** @use HasFactory<\Database\Factories\ParticipantsFactory> */
     use HasFactory;
 
+    public $timestamps = true;
+    protected $guarded = [];
+
     protected $dispatchesEvents = [
         'created' => EventCreated::class,
     ];

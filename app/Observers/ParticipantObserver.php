@@ -4,14 +4,17 @@ namespace App\Observers;
 
 use App\Models\Participant;
 use App\Jobs\SendEventNotification;
+use App\Traits\HasCacheTrait;
 
 class ParticipantObserver
 {
+    use HasCacheTrait;
     /**
      * Handle the Participant "created" event.
      */
     public function created(Participant $participant): void
     {
+        $this->forgetCache('participants.all');
         // $participant->load('events');
 
         // if($participant->events)
@@ -28,7 +31,7 @@ class ParticipantObserver
      */
     public function updated(Participant $participant): void
     {
-        //
+        $this->forgetCache('participants.all');
     }
 
     /**
@@ -36,7 +39,7 @@ class ParticipantObserver
      */
     public function deleted(Participant $participant): void
     {
-        //
+        $this->forgetCache('participants.all');
     }
 
     /**
