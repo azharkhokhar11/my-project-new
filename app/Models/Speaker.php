@@ -9,6 +9,7 @@ class Speaker extends Model
 {
     /** @use HasFactory<\Database\Factories\SpeakerFactory> */
     use HasFactory;
+    protected $guarded = [];
 
     public function events()
     {

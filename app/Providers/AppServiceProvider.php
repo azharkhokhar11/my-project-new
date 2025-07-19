@@ -12,6 +12,8 @@ use App\Listeners\SendEventCreatedEmail;
 use App\Repositories\ParticipantRepository;
 use App\Repositories\SpeakerRepositoryInterface;
 use App\Repositories\ParticipantRepositoryInterface;
+use App\Repositories\EventRepository;
+use App\Repositories\EventRepositoryInterface;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ParticipantRepositoryInterface::class, ParticipantRepository::class);
         $this->app->bind(SpeakerRepositoryInterface::class, SpeakerRepository::class);
+         $this->app->bind(EventRepositoryInterface::class, EventRepository::class);
 
     }
 

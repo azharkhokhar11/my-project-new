@@ -10,6 +10,7 @@ use App\Models\Event;
 use App\Models\Venue;
 use Psy\Readline\Hoa\EventSource;
 use Illuminate\Support\Facades\Gate;
+use App\Services\EventService;
 use Illuminate\Validation\Rule;
 use App\Traits\HasCacheTrait;
 use Illuminate\Cache\HasCacheLock;
@@ -17,6 +18,13 @@ use Illuminate\Cache\HasCacheLock;
 class EventsController extends Controller
 {
     use HasCacheTrait;
+
+    protected $service;
+
+    public function __construct(EventService $service)
+    {
+        $this->service = $service;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -25,7 +33,7 @@ class EventsController extends Controller
         Gate::authorize('viewAny', Event::class);
 
         $events = $this->getFromCache('events.all', function(){
-            return Event::with('venue:id,name','participants')->get();
+            return $this->service->getAll();
         });
 
         // $events = Event::with('venue:id,name','participants')->get();
@@ -40,15 +48,17 @@ class EventsController extends Controller
         Gate::authorize('create', Event::class);
         $validateddata = $request->validated();
 
-        $event = new Event;
-        $event->name = $validateddata['name'];
-        $event->description = $validateddata['description'];
-        $event->date = $validateddata['date'];
-        $event->venue_id = $validateddata['venue_id'];        
-        $event->user_id = $validateddata['user_id'];
-        $event->save();
+        $event = $this->service->create($validateddata);
 
         return new EventResource($event);
+
+        // $event = new Event;
+        // $event->name = $validateddata['name'];
+        // $event->description = $validateddata['description'];
+        // $event->date = $validateddata['date'];
+        // $event->venue_id = $validateddata['venue_id'];        
+        // $event->user_id = $validateddata['user_id'];
+        // $event->save();
     }
 
     /**
@@ -57,7 +67,7 @@ class EventsController extends Controller
     public function show(Event $event)
     {
         Gate::authorize('view',$event);
-        return new EventResource($event);
+        return new EventResource($this->service->show($event));
     }
 
     /**
@@ -69,8 +79,10 @@ class EventsController extends Controller
         if($response->allowed())
         {
             $validateddata = $request->validated(); 
+
+            $event = $this->service->update($event, $validateddata);
     
-            $event->update($validateddata);
+            // $event->update($validateddata);
 
             return new EventResource($event);
         } else {
@@ -86,7 +98,9 @@ class EventsController extends Controller
     public function destroy(Event $event)
     {
         Gate::authorize('delete',$event);
-        $event->delete();
+
+        $this->service->delete($event);
+        // $event->delete();
 
         return new EventResource($event);
     }
