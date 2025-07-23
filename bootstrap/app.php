@@ -13,8 +13,13 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-        'role' => \App\Http\Middleware\RoleMiddleware::class,
+        'role' => \App\Http\Middleware\RoleMiddleware::class,       
+        'validate_token' => \App\Http\Middleware\ValidateApiToken::class,
     ]);
+        $middleware->append([
+        'check_maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
+        'block_ip' => \App\Http\Middleware\BlockIp::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -21,7 +21,7 @@ Route::post('register',[UsersController::class, 'store']);
 
 Route::apiResource('venues', VenuesController::class);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'validate_token'])->group(function () {
 
 Route::delete('logout',[LoginController::class,'logout']);
 
