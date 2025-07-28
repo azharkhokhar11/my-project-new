@@ -59,6 +59,16 @@ class VenuesController extends Controller
         $venue->address = $request->address;
         $venue->phone_number = $request->phone_number;
         $venue->update();
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('venues', 'public');
+    
+                $venue->images()->create([
+                    'url' => $path,
+                ]);
+            }
+        }    
         return new VenueResource($venue);
     }
 

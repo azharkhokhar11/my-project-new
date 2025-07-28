@@ -21,12 +21,20 @@ Route::post('register',[UsersController::class, 'store']);
 
 Route::apiResource('venues', VenuesController::class);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'validate_token'])->group(function () {
 
 Route::delete('logout',[LoginController::class,'logout']);
 
 Route::apiResource('events', EventsController::class);
-Route::apiResource('participants', ParticipantsController::class);
+
+// Route::apiResource('participants', ParticipantsController::class);
+
+Route::get('participants', [ParticipantsController::class, 'index']);
+Route::post('participants', [ParticipantsController::class, 'store'])->middleware('role:admin,user');
+Route::get('participants/{participant}', [ParticipantsController::class, 'show'])->middleware('role:admin,user');
+Route::put('participants/{participant}', [ParticipantsController::class, 'update'])->middleware('role:admin,user');
+Route::delete('participants/{participant}', [ParticipantsController::class, 'destroy'])->middleware('role:admin');
+
 Route::apiResource('speakers', SpeakersController::class);
 
 });

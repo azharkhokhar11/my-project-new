@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginUserRequest extends FormRequest
+class StoreEventRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,8 +22,11 @@ class LoginUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required','email','exists:events,email'],
-            'password' => ['required']
+            'name' => ['required','string','max:255','unique:events'],
+            'description' => ['required','string'],
+            'date' => ['required','date'],
+            'venue_id' => ['required','integer'],
+            'user_id' => ['required','integer']
         ];
     }
 }
